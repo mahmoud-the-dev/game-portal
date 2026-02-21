@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Sample Clicker</title>
+		<style>
+			* {
+				margin: 0;
+				box-sizing: border-box;
+			}
+			body {
+				font-family: system-ui, sans-serif;
+				display: grid;
+				place-items: center;
+				height: 100vh;
+				background: #111;
+				color: #eee;
+			}
+			button {
+				font-size: 1.5rem;
+				padding: 0.75rem 2rem;
+				cursor: pointer;
+				border: none;
+				border-radius: 0.5rem;
+				background: #6d28d9;
+				color: #fff;
+			}
+			button:active {
+				background: #4c1d95;
+			}
+			#count {
+				font-size: 3rem;
+				margin-bottom: 1rem;
+			}
+		</style>
+	</head>
+	<body>
+		<div style="text-align: center">
+			<div id="count">0</div>
+			<button id="btn">Click me</button>
+			<p style="margin-top: 1rem; opacity: 0.5" id="status">
+				localStorage: checking…
+			</p>
+		</div>
+		<script>
+			const STORAGE_KEY = "game:sample-clicker:clicks";
+			const countEl = document.getElementById("count");
+			const statusEl = document.getElementById("status");
+
+			let clicks = parseInt(localStorage.getItem(STORAGE_KEY) || "0", 10);
+			countEl.textContent = clicks;
+
+			document.getElementById("btn").addEventListener("click", () => {
+				clicks++;
+				countEl.textContent = clicks;
+				try {
+					localStorage.setItem(STORAGE_KEY, String(clicks));
+					statusEl.textContent = "localStorage: working ✓";
+				} catch {
+					statusEl.textContent = "localStorage: blocked ✗";
+				}
+			});
+
+			// Verify storage on load
+			try {
+				localStorage.setItem("__probe__", "1");
+				localStorage.removeItem("__probe__");
+				statusEl.textContent = "localStorage: available ✓";
+			} catch {
+				statusEl.textContent = "localStorage: blocked ✗";
+			}
+		</script>
+	</body>
+</html>
