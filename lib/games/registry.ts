@@ -28,6 +28,17 @@ export interface GameMeta {
  */
 const games: GameMeta[] = [
 	{
+		slug: "gravity-shift-runner",
+		title: "Gravity Shift",
+		description: "Master gravity manipulation to navigate challenging platforming levels in this fast-paced runner.",
+		addedAt: "2026-02-22",
+		tags: ["Platformer", "Runner"],
+		thumbnail: "/images/gravity-shift-runner.png",
+		playCount: "45K plays",
+		rating: 4.3,
+		badge: "NEW",
+	},
+	{
 		slug: "snake-game",
 		title: "Snake Game",
 		description: "A classic snake game.",

@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta content="width=device-width, initial-scale=1.0" name="viewport" />
+		<title>Gravity Shift Runner</title>
+		<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+		<link
+			href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;display=swap"
+			rel="stylesheet"
+		/>
+		<link
+			href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+			rel="stylesheet"
+		/>
+		<script id="tailwind-config">
+			tailwind.config = {
+				darkMode: "class",
+				theme: {
+					extend: {
+						colors: {
+							primary: "#0d93f2",
+							"background-light": "#f5f7f8",
+							"background-dark": "#101b22",
+						},
+						fontFamily: {
+							display: ["Inter", "sans-serif"],
+						},
+					},
+				},
+			};
+		</script>
+		<style>
+			body {
+				margin: 0;
+				padding: 0;
+				overflow: hidden;
+				background-color: #101b22;
+			}
+			.neon-glow {
+				text-shadow: 0 0 10px rgba(13, 147, 242, 0.7),
+					0 0 20px rgba(13, 147, 242, 0.5);
+			}
+			.box-glow {
+				box-shadow: 0 0 15px rgba(13, 147, 242, 0.4);
+			}
+			.neon-border {
+				box-shadow: 0 0 15px rgba(13, 147, 242, 0.5),
+					inset 0 0 5px rgba(13, 147, 242, 0.3);
+			}
+			.vignette {
+				background: radial-gradient(
+					circle,
+					transparent 20%,
+					rgba(16, 27, 34, 1) 90%
+				);
+			}
+			.grid-pattern {
+				background-image: linear-gradient(
+						to right,
+						rgba(13, 147, 242, 0.1) 1px,
+						transparent 1px
+					),
+					linear-gradient(
+						to bottom,
+						rgba(13, 147, 242, 0.1) 1px,
+						transparent 1px
+					);
+				background-size: 40px 40px;
+			}
+			.grid-bg-perspective {
+				background-image: linear-gradient(
+						to right,
+						rgba(13, 147, 242, 0.1) 1px,
+						transparent 1px
+					),
+					linear-gradient(
+						to bottom,
+						rgba(13, 147, 242, 0.1) 1px,
+						transparent 1px
+					);
+				background-size: 50px 50px;
+				perspective: 1000px;
+				transform-style: preserve-3d;
+				transform: rotateX(60deg) translateY(-200px);
+				height: 200%;
+				width: 200%;
+				position: absolute;
+				top: 0;
+				left: -50%;
+				z-index: 0;
+			}
+			/* Hidden class to toggle screens */
+			.hidden-screen {
+				display: none !important;
+			}
+			#gameCanvas {
+				position: absolute;
+				top: 0;
+				left: 0;
+				width: 100%;
+				height: 100%;
+				z-index: 10;
+				cursor: pointer;
+			}
+		</style>
+		<script type="module" crossorigin src="./assets/index-YiqwKMi0.js"></script>
+		<link rel="stylesheet" crossorigin href="./assets/index-BmeGit54.css">
+	</head>
+	<body
+		class="bg-background-dark font-display text-slate-100 overflow-hidden select-none"
+	>
+		<!-- Game Canvas Layer -->
+		<canvas id="gameCanvas" class="hidden-screen"></canvas>
+
+		<!-- MENU SCREEN -->
+		<div
+			id="main-menu"
+			class="relative z-20 flex flex-col h-screen w-full transition-opacity duration-300"
+		>
+			<div class="fixed inset-0 z-0 overflow-hidden pointer-events-none">
+				<div class="grid-bg-perspective"></div>
+				<div
+					class="absolute inset-0 vignette pointer-events-none"
+				></div>
+				<div
+					class="absolute inset-0 bg-[radial-gradient(circle_at_center,_transparent_0%,_rgba(13,147,242,0.05)_100%)]"
+				></div>
+			</div>
+
+			<header
+				class="relative z-10 flex items-center justify-between px-6 py-6 lg:px-12"
+			>
+				<div
+					class="flex items-center gap-4 bg-primary/10 border border-primary/30 backdrop-blur-md rounded-lg p-3 px-5 box-glow"
+				>
+					<span
+						class="material-symbols-outlined text-primary text-3xl"
+						>trophy</span
+					>
+					<div class="flex flex-col">
+						<span
+							class="text-[10px] uppercase tracking-widest text-primary/80 font-bold"
+							>High Score</span
+						>
+						<span
+							id="menu-high-score"
+							class="text-xl font-black italic tracking-tighter"
+							>0<span class="text-sm ml-1 opacity-70"
+								>M</span
+							></span
+						>
+					</div>
+				</div>
+				<div class="flex items-center gap-6">
+					<div
+						class="flex items-center gap-4 bg-primary/10 border border-primary/30 backdrop-blur-md rounded-lg p-3 px-5 box-glow"
+					>
+						<span
+							class="material-symbols-outlined text-primary text-3xl"
+							>payments</span
+						>
+						<div class="flex flex-col">
+							<span
+								class="text-[10px] uppercase tracking-widest text-primary/80 font-bold"
+								>Total Coins</span
+							>
+							<span
+								id="menu-total-coins"
+								class="text-xl font-black italic tracking-tighter"
+								>0<span class="text-sm ml-1 opacity-70"
+									>GC</span
+								></span
+							>
+						</div>
+					</div>
+					<div
+						class="size-12 rounded-full border-2 border-primary bg-primary/20 flex items-center justify-center overflow-hidden"
+					>
+						<span
+							class="material-symbols-outlined text-primary text-2xl"
+							>person</span
+						>
+					</div>
+				</div>
+			</header>
+
+			<main
+				class="relative z-10 flex-1 flex flex-col items-center justify-center text-center px-4"
+			>
+				<div class="mb-16 relative">
+					<div
+						class="absolute -inset-4 bg-primary/20 blur-3xl rounded-full"
+					></div>
+					<h1
+						class="relative text-6xl md:text-8xl lg:text-9xl font-black tracking-tighter italic text-white neon-glow leading-none"
+					>
+						GRAVITY<br />SHIFT<br />RUNNER
+					</h1>
+					<div class="mt-4 flex justify-center gap-2">
+						<div
+							class="h-1 w-12 bg-primary rounded-full box-glow"
+						></div>
+						<div
+							class="h-1 w-24 bg-primary rounded-full box-glow"
+						></div>
+						<div
+							class="h-1 w-12 bg-primary rounded-full box-glow"
+						></div>
+					</div>
+				</div>
+				<div class="flex flex-col gap-4 w-full max-w-sm">
+					<button
+						id="play-button"
+						class="group relative flex items-center justify-center h-16 bg-primary hover:bg-primary/90 rounded-lg transition-all duration-300 box-glow overflow-hidden"
+					>
+						<div
+							class="absolute inset-0 bg-white/10 translate-y-full group-hover:translate-y-0 transition-transform duration-300"
+						></div>
+						<div class="flex items-center gap-3 relative">
+							<span class="material-symbols-outlined text-3xl"
+								>play_arrow</span
+							>
+							<span
+								class="text-2xl font-black tracking-widest italic"
+								>PLAY NOW</span
+							>
+						</div>
+					</button>
+					<div class="grid grid-cols-2 gap-4">
+						<button
+							class="flex items-center justify-center gap-2 h-14 bg-slate-800/50 hover:bg-slate-700/50 border border-primary/20 hover:border-primary/50 rounded-lg transition-all backdrop-blur-sm"
+						>
+							<span class="material-symbols-outlined text-primary"
+								>shopping_bag</span
+							>
+							<span
+								class="font-bold tracking-widest text-sm uppercase"
+								>Shop</span
+							>
+						</button>
+						<button
+							class="flex items-center justify-center gap-2 h-14 bg-slate-800/50 hover:bg-slate-700/50 border border-primary/20 hover:border-primary/50 rounded-lg transition-all backdrop-blur-sm"
+						>
+							<span class="material-symbols-outlined text-primary"
+								>settings</span
+							>
+							<span
+								class="font-bold tracking-widest text-sm uppercase"
+								>Settings</span
+							>
+						</button>
+					</div>
+				</div>
+			</main>
+			<footer class="relative z-10 pb-12 text-center pointer-events-none">
+				<div class="flex flex-col items-center gap-4">
+					<p
+						class="text-primary font-bold tracking-[0.3em] uppercase animate-pulse text-sm"
+					>
+						Press
+						<span
+							class="bg-primary/20 px-2 py-0.5 rounded border border-primary/30"
+							>[SPACEBAR]</span
+						>
+						or Tap to Start
+					</p>
+				</div>
+			</footer>
+		</div>
+
+		<!-- GAME OVERLAY HUD -->
+		<div
+			id="game-hud"
+			class="absolute inset-0 p-8 flex flex-col justify-between z-30 pointer-events-none hidden-screen"
+		>
+			<!-- Overlay effects handled directly or via Canvas. Vignette overlay: -->
+			<div
+				class="absolute inset-0 vignette pointer-events-none z-0"
+			></div>
+
+			<div class="relative z-10 flex justify-between items-start">
+				<div class="flex flex-col">
+					<span
+						class="text-[10px] font-bold tracking-[0.2em] text-primary/70 uppercase"
+						>Distance</span
+					>
+					<div class="flex items-baseline gap-1">
+						<span
+							id="hud-distance"
+							class="text-3xl font-black text-white neon-glow tabular-nums"
+							>0</span
+						>
+						<span class="text-sm font-bold text-primary">m</span>
+					</div>
+				</div>
+
+				<!-- Pause Button Area -->
+				<div
+					class="absolute left-1/2 -translate-x-1/2 top-0 pointer-events-auto"
+				>
+					<button
+						id="pause-button"
+						class="bg-primary/20 hover:bg-primary/40 text-primary border border-primary/40 rounded-full p-2 backdrop-blur-md transition-colors shadow-[0_0_10px_rgba(13,147,242,0.3)]"
+					>
+						<span class="material-symbols-outlined text-3xl"
+							>pause</span
+						>
+					</button>
+				</div>
+
+				<div class="flex flex-col items-end">
+					<span
+						class="text-[10px] font-bold tracking-[0.2em] text-primary/70 uppercase"
+						>Collected</span
+					>
+					<div
+						class="flex items-center gap-3 bg-primary/10 border border-primary/30 px-4 py-2 rounded-xl backdrop-blur-md pt-2 pb-2"
+					>
+						<div
+							class="flex items-center justify-center size-6 bg-yellow-400 rounded-full shadow-[0_0_10px_rgba(250,204,21,0.6)]"
+						>
+							<span
+								class="material-symbols-outlined text-background-dark text-sm font-bold"
+								style="font-size: 14px"
+								>monetization_on</span
+							>
+						</div>
+						<span
+							id="hud-coins"
+							class="text-2xl font-black text-white tabular-nums px-1"
+							>0</span
+						>
+					</div>
+				</div>
+			</div>
+
+			<div
+				id="tutorial-overlay"
+				class="relative z-10 flex flex-col items-center gap-4 animate-pulse transition-opacity duration-500"
+			>
+				<h1
+					class="text-white text-xl font-bold tracking-widest uppercase opacity-90 text-center"
+				>
+					Tap or Press Space to Shift Gravity
+				</h1>
+				<div class="flex items-center gap-6 opacity-60">
+					<div class="flex flex-col items-center gap-1">
+						<div
+							class="px-4 py-1 border-2 border-primary/40 rounded-lg text-primary text-xs font-bold bg-primary/5"
+						>
+							SPACEBAR
+						</div>
+					</div>
+					<div class="h-4 w-[1px] bg-primary/20"></div>
+					<div class="flex flex-col items-center gap-1">
+						<div
+							class="size-8 flex items-center justify-center border-2 border-primary/40 rounded-lg text-primary bg-primary/5"
+						>
+							<span class="material-symbols-outlined text-sm"
+								>ads_click</span
+							>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="relative z-10 flex justify-between items-end">
+				<div class="flex gap-4">
+					<div
+						class="flex items-center gap-2 bg-slate-900/60 px-3 py-1.5 rounded-lg border border-white/5"
+					>
+						<span
+							class="material-symbols-outlined text-primary text-lg"
+							>speed</span
+						>
+						<span
+							id="hud-speed-multiplier"
+							class="text-xs font-bold text-slate-300"
+							>1.0x SPEED</span
+						>
+					</div>
+				</div>
+				<div class="flex flex-col items-end gap-1">
+					<div
+						class="text-[9px] font-bold text-primary/50 uppercase tracking-widest"
+					>
+						Multiplier
+					</div>
+					<div
+						id="score-multiplier"
+						class="text-xl font-black text-white italic"
+					>
+						x1
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- PAUSE & COUNTDOWN OVERLAY -->
+		<div
+			id="pause-overlay"
+			class="absolute inset-0 bg-background-dark/80 backdrop-blur-sm z-40 flex flex-col items-center justify-center hidden-screen pointer-events-auto"
+		>
+			<h2
+				class="text-5xl font-black italic text-primary tracking-tighter uppercase mb-8"
+			>
+				PAUSED
+			</h2>
+			<button
+				id="resume-button"
+				class="group relative flex items-center justify-center px-10 h-16 bg-primary hover:bg-primary/90 rounded-lg transition-all duration-300 box-glow overflow-hidden mb-4"
+			>
+				<div class="flex items-center gap-3 relative z-10">
+					<span class="material-symbols-outlined text-3xl"
+						>play_arrow</span
+					>
+					<span
+						class="text-2xl font-black tracking-widest italic uppercase"
+						>Resume</span
+					>
+				</div>
+			</button>
+			<button
+				id="pause-menu-button"
+				class="px-10 h-12 bg-transparent border border-primary/30 hover:bg-primary/10 rounded-lg font-bold tracking-widest text-sm text-primary transition-all uppercase"
+			>
+				Main Menu
+			</button>
+		</div>
+
+		<div
+			id="countdown-overlay"
+			class="absolute inset-0 bg-background-dark/30 z-[45] flex items-center justify-center p-4 pointer-events-none hidden-screen"
+		>
+			<span
+				id="countdown-text"
+				class="text-[150px] font-black italic tracking-tighter text-white neon-glow drop-shadow-2xl"
+				>3</span
+			>
+		</div>
+
+		<!-- GAME OVER SCREEN (Simulated Dialog) -->
+		<div
+			id="game-over-screen"
+			class="absolute inset-0 bg-background-dark/90 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden-screen"
+		>
+			<div
+				class="max-w-md w-full bg-slate-900 border border-primary/40 rounded-2xl p-8 flex flex-col items-center text-center box-glow"
+			>
+				<h2
+					class="text-4xl font-black italic text-red-500 tracking-tighter uppercase mb-2"
+				>
+					SYSTEM FAILURE
+				</h2>
+				<p
+					class="text-primary/70 text-sm font-bold uppercase tracking-widest mb-8"
+				>
+					Collision Detected
+				</p>
+
+				<div class="w-full grid grid-cols-2 gap-4 mb-8">
+					<div
+						class="bg-primary/10 border border-primary/30 rounded-xl p-4 flex flex-col items-center"
+					>
+						<span
+							class="text-[10px] uppercase font-bold text-primary/60 mb-1"
+							>Distance Reached</span
+						>
+						<span
+							id="go-distance"
+							class="text-2xl font-black text-white"
+							>0<span class="text-xs ml-1 opacity-50"
+								>M</span
+							></span
+						>
+					</div>
+					<div
+						class="bg-yellow-400/10 border border-yellow-400/30 rounded-xl p-4 flex flex-col items-center"
+					>
+						<span
+							class="text-[10px] uppercase font-bold text-yellow-400/60 mb-1"
+							>Coins Collected</span
+						>
+						<span
+							id="go-coins"
+							class="text-2xl font-black text-white"
+							>0</span
+						>
+					</div>
+				</div>
+
+				<button
+					id="restart-button"
+					class="w-full h-14 bg-primary hover:bg-primary/90 rounded-lg font-black tracking-widest italic text-xl transition-all mb-4"
+				>
+					REBOOT SYSTEM
+				</button>
+				<button
+					id="menu-button"
+					class="w-full h-12 bg-transparent border border-primary/30 hover:bg-primary/10 rounded-lg font-bold tracking-widest text-sm text-primary transition-all uppercase"
+				>
+					Main Menu
+				</button>
+			</div>
+		</div>
+
+	</body>
+</html>
