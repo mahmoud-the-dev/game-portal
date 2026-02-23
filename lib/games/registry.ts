@@ -28,9 +28,34 @@ export interface GameMeta {
  */
 const games: GameMeta[] = [
 	{
+		slug: "orbital-defender",
+		title: "Orbital Defender",
+		description:
+			"Defend your central core against relentless 360-degree enemy swarms in this fast-paced survival shooter.",
+		addedAt: "2026-02-23",
+		tags: ["Shooter", "Survival", "Arcade"],
+		thumbnail: "/images/orbital-defender.png",
+		playCount: "12K plays",
+		rating: 4.8,
+		badge: "HOT",
+	},
+	{
+		slug: "elemental-merge-drop",
+		title: "Elemental Merge Drop",
+		description:
+			"Drop and combine elemental orbs to discover cosmic singularities before the box overflows.",
+		addedAt: "2026-02-23",
+		tags: ["Merge", "Physics", "Puzzle"],
+		thumbnail: "/images/elemental-merge-drop.png",
+		playCount: "12K plays",
+		rating: 4.8,
+		badge: "NEW",
+	},
+	{
 		slug: "gravity-shift-runner",
 		title: "Gravity Shift",
-		description: "Master gravity manipulation to navigate challenging platforming levels in this fast-paced runner.",
+		description:
+			"Master gravity manipulation to navigate challenging platforming levels in this fast-paced runner.",
 		addedAt: "2026-02-22",
 		tags: ["Platformer", "Runner"],
 		thumbnail: "/images/gravity-shift-runner.png",

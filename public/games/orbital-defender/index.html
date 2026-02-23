@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta
+			name="viewport"
+			content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+		/>
+		<title>Orbital Defender</title>
+		<style>
+			body {
+				margin: 0;
+				padding: 0;
+				background: #111;
+				overflow: hidden;
+				font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+				color: white;
+				touch-action: none;
+				user-select: none;
+			}
+			canvas {
+				display: block;
+				width: 100vw;
+				height: 100vh;
+			}
+			#ui-layer {
+				position: absolute;
+				top: 0;
+				left: 0;
+				width: 100%;
+				height: 100%;
+				pointer-events: none;
+			}
+			#hud {
+				padding: 15px;
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+				font-size: 1.2rem;
+				font-weight: bold;
+				text-shadow: 1px 1px 2px black;
+				pointer-events: none;
+			}
+			.hud-left {
+				display: flex;
+				flex-direction: column;
+				gap: 5px;
+			}
+			#menu {
+				position: absolute;
+				top: 50%;
+				left: 50%;
+				transform: translate(-50%, -50%);
+				padding: 30px;
+				background: rgba(0, 0, 0, 0.85);
+				border: 2px solid #555;
+				border-radius: 12px;
+				text-align: center;
+				pointer-events: auto;
+				display: none;
+				min-width: 300px;
+				box-shadow: 0 0 20px rgba(0, 0, 0, 0.8);
+			}
+			h1 {
+				margin-top: 0;
+				color: #4af;
+			}
+			button,
+			select {
+				display: block;
+				width: 100%;
+				box-sizing: border-box;
+				background: #333;
+				color: white;
+				border: 1px solid white;
+				padding: 10px 20px;
+				margin: 10px 0;
+				cursor: pointer;
+				border-radius: 5px;
+				font-size: 1rem;
+				transition: background 0.2s;
+			}
+			button:hover:not(:disabled),
+			select:hover {
+				background: #555;
+			}
+			button:disabled {
+				opacity: 0.5;
+				cursor: not-allowed;
+				border-color: #555;
+				color: #aaa;
+			}
+			#btn-start {
+				background: #090;
+				margin-top: 20px;
+				font-size: 1.2em;
+				font-weight: bold;
+			}
+			#btn-start:hover {
+				background: #0c0;
+			}
+			#btn-pause {
+				background: rgba(0, 0, 0, 0.5);
+				border: 1px solid #aaa;
+				padding: 5px 15px;
+				width: auto;
+				pointer-events: auto;
+			}
+			#btn-pause:hover {
+				background: rgba(255, 255, 255, 0.2);
+			}
+		</style>
+		<script type="module" crossorigin src="/assets/index-IYWJsjXV.js"></script>
+		<link rel="stylesheet" crossorigin href="/assets/index-tn0RQdqM.css">
+	</head>
+	<body>
+		<canvas id="gameCanvas"></canvas>
+		<div id="ui-layer">
+			<div id="hud">
+				<div class="hud-left">
+					<div id="wave-display">Wave: 1 (Max: 1)</div>
+					<div id="points-display">Points: 0</div>
+					<div id="lives-display">Lives: ♥♥♥</div>
+				</div>
+				<button id="btn-pause">Pause</button>
+			</div>
+			<div id="menu">
+				<h1 id="menu-title">Orbital Defender</h1>
+				<p id="menu-subtitle">Defend the Core!</p>
+
+				<div
+					style="
+						margin: 20px 0;
+						border-top: 1px solid #444;
+						border-bottom: 1px solid #444;
+						padding: 15px 0;
+					"
+				>
+					<p style="margin: 0 0 10px 0; font-weight: bold">
+						Spent Upgrade Points:
+						<span id="menu-points" style="color: yellow">0</span>
+					</p>
+					<button id="btn-reload">
+						Upgrade Reload Time <br /><small
+							>Level <span id="lvl-reload">0</span> - Cost:
+							<span id="cost-reload">10</span></small
+						>
+					</button>
+					<button id="btn-multishot">
+						Upgrade Multi-shot <br /><small
+							>Level <span id="lvl-multishot">1</span> - Cost:
+							<span id="cost-multishot">50</span></small
+						>
+					</button>
+				</div>
+
+				<button id="btn-start">Start Game</button>
+			</div>
+		</div>
+	</body>
+</html>
